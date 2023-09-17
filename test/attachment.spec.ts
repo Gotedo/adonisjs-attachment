@@ -15,7 +15,7 @@ import supertest from 'supertest'
 import { createServer } from 'http'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { BodyParserMiddleware } from '@adonisjs/bodyparser/build/src/BodyParser'
-
+import { readFile } from 'fs/promises'
 import { Attachment } from '../src/Attachment'
 import { setup, cleanup, setupApplication } from '../test-helpers'
 
@@ -231,6 +231,90 @@ test.group('Attachment | fromFile', (group) => {
     const { body } = await supertest(server)
       .post('/')
       .attach('avatar', join(__dirname, '../cat.jpeg'))
+
+    assert.isDefined(body.url)
+  })
+})
+
+test.group('Attachment | fromBuffer', (group) => {
+  group.setup(async () => {
+    app = await setupApplication()
+    await setup(app)
+
+    app.container.resolveBinding('Adonis/Core/Route').commit()
+    Attachment.setDrive(app.container.resolveBinding('Adonis/Core/Drive'))
+  })
+
+  group.teardown(async () => {
+    await cleanup(app)
+  })
+
+  test('create attachment from the user provided buffer', async ({ assert }) => {
+    const server = createServer((req, res) => {
+      const ctx = app.container.resolveBinding('Adonis/Core/HttpContext').create('/', {}, req, res)
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const readableStream = await readFile(join(__dirname, '../cat.jpeg'))
+        const attachment = Attachment.fromBuffer(readableStream, 'avatar-1')
+        await attachment.save()
+
+        assert.isTrue(attachment.isPersisted)
+        assert.isTrue(attachment.isLocal)
+
+        ctx.response.send(attachment)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server).post('/')
+
+    const Drive = app.container.resolveBinding('Adonis/Core/Drive')
+    assert.isTrue(await Drive.exists(body.name))
+  })
+
+  test('pre compute url for newly created file', async ({ assert }) => {
+    const server = createServer((req, res) => {
+      const ctx = app.container.resolveBinding('Adonis/Core/HttpContext').create('/', {}, req, res)
+
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const readableStream = await readFile(join(__dirname, '../cat.jpeg'))
+        const attachment = Attachment.fromBuffer(readableStream, 'avatar-1')
+        attachment.setOptions({ preComputeUrl: true })
+        await attachment.save()
+
+        assert.isTrue(attachment.isPersisted)
+        assert.isTrue(attachment.isLocal)
+
+        ctx.response.send(attachment)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server).post('/')
+
+    assert.isDefined(body.url)
+  })
+
+  test('delete local file', async ({ assert }) => {
+    const server = createServer((req, res) => {
+      const ctx = app.container.resolveBinding('Adonis/Core/HttpContext').create('/', {}, req, res)
+
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const readableStream = await readFile(join(__dirname, '../cat.jpeg'))
+        const attachment = Attachment.fromBuffer(readableStream, 'avatar-1')
+        attachment.setOptions({ preComputeUrl: true })
+        await attachment.save()
+        await attachment.delete()
+
+        assert.isFalse(attachment.isPersisted)
+        assert.isTrue(attachment.isLocal)
+        assert.isTrue(attachment.isDeleted)
+
+        ctx.response.send(attachment)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server).post('/')
 
     assert.isDefined(body.url)
   })

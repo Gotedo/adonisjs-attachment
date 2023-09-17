@@ -19,6 +19,8 @@ import type {
   AttachmentAttributes,
   AttachmentConstructorContract,
 } from '@ioc:Adonis/Addons/AttachmentLite'
+import detect from 'detect-file-type'
+import { Readable } from 'stream'
 
 const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType']
 
@@ -48,13 +50,43 @@ export class Attachment implements AttachmentContract {
    * file
    */
   public static fromFile(file: MultipartFileContract) {
-    const attributes = {
+    const attributes: AttachmentAttributes = {
       extname: file.extname!,
       mimeType: `${file.type}/${file.subtype}`,
       size: file.size!,
     }
 
     return new Attachment(attributes, file)
+  }
+
+  /**
+   * Create attachment instance from the bodyparser via a buffer
+   */
+  public static fromBuffer(buffer: Buffer, filename: string): Attachment {
+    type BufferProperty = { ext: string; mime: string }
+
+    let bufferProperty: BufferProperty | undefined
+
+    detect.fromBuffer(buffer, function (err: Error | string, result: BufferProperty) {
+      if (err) {
+        throw new Error(err instanceof Error ? err.message : err)
+      }
+      if (!result) {
+        throw new Exception('Please provide a valid file buffer')
+      }
+      bufferProperty = result
+    })
+
+    const { mime, ext } = bufferProperty!
+
+    const attributes: AttachmentAttributes = {
+      extname: ext,
+      mimeType: mime,
+      size: buffer.length,
+      tmpName: filename,
+    }
+
+    return new Attachment(attributes, undefined, buffer)
   }
 
   /**
@@ -95,7 +127,12 @@ export class Attachment implements AttachmentContract {
   /**
    * The name is available only when "isPersisted" is true.
    */
-  public name: string
+  public name?: string
+
+  /**
+   * The tmpName is available only when "isPersisted" is false.
+   */
+  public tmpName?: string
 
   /**
    * The url is available only when "isPersisted" is true.
@@ -122,7 +159,7 @@ export class Attachment implements AttachmentContract {
    * "isLocal = true" means the instance is created locally
    * using the bodyparser file object
    */
-  public isLocal = !!this.file
+  public isLocal = !!this.file || !!this.buffer
 
   /**
    * Find if the file has been persisted or not.
@@ -134,9 +171,19 @@ export class Attachment implements AttachmentContract {
    */
   public isDeleted: boolean
 
-  constructor(private attributes: AttachmentAttributes, private file?: MultipartFileContract) {
-    if (this.attributes.name) {
-      this.name = this.attributes.name
+  constructor(
+    private attributes: AttachmentAttributes,
+    private file?: MultipartFileContract,
+    private buffer?: Buffer
+  ) {
+    this.name = this.attributes.name
+    this.mimeType = this.attributes.mimeType
+    this.extname = this.attributes.extname
+    this.size = this.attributes.size
+    this.tmpName = this.attributes.tmpName
+
+    if (!file && !buffer) {
+      throw new Error('Either "file" or "buffer" is required to initialise an attachment')
     }
   }
 
@@ -149,8 +196,10 @@ export class Attachment implements AttachmentContract {
       return this.name
     }
 
+    const name = this.file ? this.file.fileName : this.tmpName
+
     const folder = this.options?.folder
-    return `${folder ? `${folder}/` : ''}${cuid()}.${this.extname}`
+    return `${folder ? `${folder}/` : ''}${name ?? cuid()}.${this.extname}`
   }
 
   /**
@@ -182,20 +231,31 @@ export class Attachment implements AttachmentContract {
       return
     }
 
+    const name = this.generateName()
+
     /**
      * Write to the disk
      */
-    await this.file!.moveToDisk('./', { name: this.generateName() }, this.options?.disk)
+    if (this.buffer) {
+      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()))
+    } else {
+      await this.file!.moveToDisk('./', { name }, this.options?.disk)
+    }
 
     /**
      * Assign name to the file
      */
-    this.name = this.file!.fileName!
+    this.name = name
 
     /**
      * File has been persisted
      */
     this.isPersisted = true
+
+    /**
+     * Remove the tmpName
+     */
+    this.tmpName = undefined
 
     /**
      * Compute the URL
@@ -207,7 +267,7 @@ export class Attachment implements AttachmentContract {
    * Delete the file from the disk
    */
   public async delete() {
-    if (!this.isPersisted) {
+    if (!this.isPersisted || !this.name) {
       return
     }
 
@@ -223,7 +283,7 @@ export class Attachment implements AttachmentContract {
     /**
      * Cannot compute url for a non persisted file
      */
-    if (!this.isPersisted) {
+    if (!this.isPersisted || !this.name) {
       return
     }
 
@@ -259,6 +319,10 @@ export class Attachment implements AttachmentContract {
    * Returns the URL for the file. Same as "Drive.getUrl()"
    */
   public getUrl() {
+    if (!this.name) {
+      return Promise.resolve('')
+    }
+
     return this.getDisk().getUrl(this.name)
   }
 
@@ -266,6 +330,10 @@ export class Attachment implements AttachmentContract {
    * Returns the signed URL for the file. Same as "Drive.getSignedUrl()"
    */
   public getSignedUrl(options?: ContentHeaders & { expiresIn?: string | number }) {
+    if (!this.name) {
+      return Promise.resolve('')
+    }
+
     return this.getDisk().getSignedUrl(this.name, options)
   }
 

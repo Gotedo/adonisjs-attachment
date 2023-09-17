@@ -23,6 +23,7 @@ declare module '@ioc:Adonis/Addons/AttachmentLite' {
    */
   export type AttachmentAttributes = {
     name?: string
+    tmpName?: string
     size: number
     extname: string
     mimeType: string
@@ -48,7 +49,7 @@ declare module '@ioc:Adonis/Addons/AttachmentLite' {
     /**
      * The name is available only when "isPersisted" is true.
      */
-    name: string
+    name?: string
 
     /**
      * The url is available only when "isPersisted" is true.
@@ -118,14 +119,7 @@ declare module '@ioc:Adonis/Addons/AttachmentLite' {
     getSignedUrl(options?: ContentHeaders & { expiresIn?: string | number }): Promise<string>
 
     /**
-     * Convert attachment to plain object to be persisted inside
-     * the database
-     */
-    toObject(): AttachmentAttributes
-
-    /**
-     * Convert attachment to JSON object to be sent over
-     * the wire
+     * Attachment attributes
      */
     toJSON(): AttachmentAttributes & { url?: string }
   }
@@ -146,6 +140,7 @@ declare module '@ioc:Adonis/Addons/AttachmentLite' {
   export interface AttachmentConstructorContract {
     new (attributes: AttachmentAttributes, file?: MultipartFileContract): AttachmentContract
     fromFile(file: MultipartFileContract): AttachmentContract
+    fromBuffer(buffer: Buffer, fileName: string): AttachmentContract
     fromDbResponse(response: string): AttachmentContract
     getDrive(): DriveManagerContract
     setDrive(drive: DriveManagerContract): void
