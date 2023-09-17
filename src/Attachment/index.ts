@@ -182,7 +182,7 @@ export class Attachment implements AttachmentContract {
     this.size = this.attributes.size
     this.tmpName = this.attributes.tmpName
 
-    if (!file && !buffer) {
+    if (!file && !buffer && !this.isPersisted) {
       throw new Error('Either "file" or "buffer" is required to initialise an attachment')
     }
   }
