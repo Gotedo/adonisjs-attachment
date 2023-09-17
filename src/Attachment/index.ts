@@ -10,7 +10,7 @@
 /// <reference path="../../adonis-typings/index.ts" />
 
 import { Exception } from '@poppinss/utils'
-import { cuid } from '@poppinss/utils/build/helpers'
+import { createId } from '@paralleldrive/cuid2'
 import type { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
 import type { DriveManagerContract, ContentHeaders } from '@ioc:Adonis/Core/Drive'
 import type {
@@ -21,6 +21,7 @@ import type {
 } from '@ioc:Adonis/Addons/AttachmentLite'
 import detect from 'detect-file-type'
 import { Readable } from 'stream'
+import sanitize from 'sanitize-filename'
 
 const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType']
 
@@ -83,7 +84,7 @@ export class Attachment implements AttachmentContract {
       extname: ext,
       mimeType: mime,
       size: buffer.length,
-      tmpName: filename,
+      clientName: filename,
     }
 
     return new Attachment(attributes, undefined, buffer)
@@ -130,9 +131,9 @@ export class Attachment implements AttachmentContract {
   public name?: string
 
   /**
-   * The tmpName is available only when "isPersisted" is false.
+   * The clientName is available only when "isPersisted" is false.
    */
-  public tmpName?: string
+  public clientName?: string
 
   /**
    * The url is available only when "isPersisted" is true.
@@ -180,11 +181,7 @@ export class Attachment implements AttachmentContract {
     this.mimeType = this.attributes.mimeType
     this.extname = this.attributes.extname
     this.size = this.attributes.size
-    this.tmpName = this.attributes.tmpName
-
-    if (!file && !buffer && !this.isPersisted) {
-      throw new Error('Either "file" or "buffer" is required to initialise an attachment')
-    }
+    this.clientName = this.attributes.clientName
   }
 
   /**
@@ -196,10 +193,21 @@ export class Attachment implements AttachmentContract {
       return this.name
     }
 
-    const name = this.file ? this.file.fileName : this.tmpName
+    let name = this.clientName ?? this.file?.clientName
+
+    if (name) {
+      // Remove extension from clientName
+      const clientNameParts = name.split('.')
+      if (clientNameParts.length > 1) {
+        name = clientNameParts.slice(0, clientNameParts.length - 1).join('.')
+      }
+      name = `${sanitize(name)}-${createId()}`
+    } else {
+      name = createId()
+    }
 
     const folder = this.options?.folder
-    return `${folder ? `${folder}/` : ''}${name ?? cuid()}.${this.extname}`
+    return `${folder ? `${folder}/` : ''}${name}.${this.extname}`
   }
 
   /**
@@ -223,6 +231,10 @@ export class Attachment implements AttachmentContract {
    * Save file to the disk. Results if noop when "this.isLocal = false"
    */
   public async save() {
+    if (!this.file && !this.buffer && !this.isPersisted) {
+      throw new Error('Either "file" or "buffer" is required')
+    }
+
     /**
      * Do not persist already persisted file or if the
      * instance is not local
@@ -253,9 +265,9 @@ export class Attachment implements AttachmentContract {
     this.isPersisted = true
 
     /**
-     * Remove the tmpName
+     * Remove the clientName
      */
-    this.tmpName = undefined
+    this.clientName = undefined
 
     /**
      * Compute the URL

@@ -1859,8 +1859,6 @@ test.group('@attachment | fromBuffer | update', (group) => {
 
     const { body: secondResponse } = await supertest(server).post('/')
 
-    console.log(firstResponse, secondResponse)
-
     const users = await User.all()
 
     assert.lengthOf(users, 1)

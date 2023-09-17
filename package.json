@@ -17,7 +17,7 @@
     "compile": "npm run lint && npm run clean && tsc",
     "build": "npm run compile",
     "prepublishOnly": "npm run build",
-    "lint": "eslint . --ext=.ts --fix",
+    "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
     "commit": "git-cz",
     "release": "np --message=\"chore(release): %s\"",
@@ -83,8 +83,10 @@
   },
   "homepage": "https://github.com/adonisjs/attachment-lite#readme",
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@poppinss/utils": "^5.0.0",
-    "detect-file-type": "^0.2.8"
+    "detect-file-type": "^0.2.8",
+    "sanitize-filename": "^1.6.3"
   },
   "adonisjs": {
     "types": "@adonisjs/attachment-lite",
@@ -127,7 +129,8 @@
     }
   },
   "eslintIgnore": [
-    "build"
+    "build",
+    "test-helpers/__app"
   ],
   "prettier": {
     "trailingComma": "es5",

@@ -23,7 +23,7 @@ declare module '@ioc:Adonis/Addons/AttachmentLite' {
    */
   export type AttachmentAttributes = {
     name?: string
-    tmpName?: string
+    clientName?: string
     size: number
     extname: string
     mimeType: string
