@@ -1,6 +1,6 @@
 {
   "name": "@gotedo/adonisjs-attachment",
-  "version": "1.0.0-beta",
+  "version": "1.0.0",
   "description": "Turn any field on your Lucid model to an attachment data type",
   "main": "build/providers/AttachmentLiteProvider.js",
   "files": [
@@ -70,7 +70,7 @@
       "path": "cz-conventional-changelog"
     }
   },
-    "np": {
+  "np": {
     "yarn": false,
     "yolo": true,
     "contents": ".",
