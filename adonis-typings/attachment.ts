@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-declare module '@ioc:Adonis/Addons/AttachmentLite' {
+declare module '@ioc:Gotedo/Adonis/AttachmentLite' {
   import { ColumnOptions } from '@ioc:Adonis/Lucid/Orm'
   import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
   import {

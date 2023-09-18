@@ -96,7 +96,7 @@ import { BaseModel } from '@ioc:Adonis/Lucid/Orm'
 import {
   attachment,
   AttachmentContract
-} from '@ioc:Adonis/Addons/AttachmentLite'
+} from '@ioc:Gotedo/Adonis/AttachmentLite'
 
 class User extends BaseModel {
   @attachment()
@@ -107,7 +107,7 @@ class User extends BaseModel {
 Now you can create an attachment from the user uploaded file as follows.
 
 ```ts
-import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { Attachment } from '@ioc:Gotedo/Adonis/AttachmentLite'
 
 class UsersController {
   public store({ request }: HttpContextContract) {
@@ -123,7 +123,7 @@ class UsersController {
 You can also create an attachment from a buffer as shown below. You are free to provide the buffer through any means in your disposal.
 
 ```ts
-import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { Attachment } from '@ioc:Gotedo/Adonis/AttachmentLite'
 import { readFile } from 'fs/promises'
 
 class UsersController {
@@ -145,7 +145,7 @@ The `Attachment.fromBuffer` method is similar to the `Attachment.fromFile` metho
 You can update the property with a newly uploaded user file, and the package will take care of removing the old file and storing the new one.
 
 ```ts
-import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { Attachment } from '@ioc:Gotedo/Adonis/AttachmentLite'
 
 class UsersController {
   public update({ request }: HttpContextContract) {
@@ -320,7 +320,7 @@ import Post from 'App/Models/Post'
 import Drive from '@ioc:Adonis/Core/Drive'
 import { file } from '@ioc:Adonis/Core/Helpers'
 import Factory from '@ioc:Adonis/Lucid/Factory'
-import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+import { Attachment } from '@ioc:Gotedo/Adonis/AttachmentLite'
 
 export default Factory.define(Post, async ({ faker }) => {
   /**

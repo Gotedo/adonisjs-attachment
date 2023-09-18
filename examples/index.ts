@@ -1,5 +1,5 @@
 import { column, BaseModel } from '@ioc:Adonis/Lucid/Orm'
-import { attachment, AttachmentContract } from '@ioc:Adonis/Addons/AttachmentLite'
+import { attachment, AttachmentContract } from '@ioc:Gotedo/Adonis/AttachmentLite'
 
 export class User extends BaseModel {
   @column()

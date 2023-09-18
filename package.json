@@ -75,7 +75,7 @@
     "yolo": true,
     "contents": ".",
     "anyBranch": false,
-    "publish": false,
+    "publish": true,
     "branch": "develop",
     "releaseDraft": true,
     "message": "chore: bump version to %s 🚀"

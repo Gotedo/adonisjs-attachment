@@ -14,7 +14,7 @@ import { join } from 'path'
 import supertest from 'supertest'
 import { createServer } from 'http'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { AttachmentContract } from '@ioc:Adonis/Addons/AttachmentLite'
+import { AttachmentContract } from '@ioc:Gotedo/Adonis/AttachmentLite'
 import { BodyParserMiddleware } from '@adonisjs/bodyparser/build/src/BodyParser'
 import { readFile } from 'fs/promises'
 import { Attachment } from '../src/Attachment'
@@ -1337,7 +1337,7 @@ test.group('@attachment | fetch', (group) => {
 
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         await Promise.all(
-          ['ndianabasi', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
+          ['ndianabasi', 'abasiofon'].map((username) => User.firstOrCreate({ username }))
         )
 
         const users = await User.all()
@@ -1480,7 +1480,7 @@ test.group('@attachment | paginate', (group) => {
 
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         await Promise.all(
-          ['ndianabasi', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
+          ['ndianabasi', 'abasiofon'].map((username) => User.firstOrCreate({ username }))
         )
 
         const users = await User.query().paginate(1)

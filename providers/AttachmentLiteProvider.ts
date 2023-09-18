@@ -13,7 +13,7 @@ export default class AttachmentLiteProvider {
   constructor(protected application: ApplicationContract) {}
 
   public register() {
-    this.application.container.bind('Adonis/Addons/AttachmentLite', () => {
+    this.application.container.bind('Gotedo/Adonis/AttachmentLite', () => {
       const { Attachment } = require('../src/Attachment')
       const { attachment } = require('../src/Attachment/decorator')
 
@@ -26,7 +26,7 @@ export default class AttachmentLiteProvider {
 
   public boot() {
     this.application.container.withBindings(
-      ['Adonis/Addons/AttachmentLite', 'Adonis/Core/Drive'],
+      ['Gotedo/Adonis/AttachmentLite', 'Adonis/Core/Drive'],
       (AttachmentLite, Drive) => {
         AttachmentLite.Attachment.setDrive(Drive)
       }

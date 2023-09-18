@@ -18,7 +18,7 @@ import type {
   AttachmentContract,
   AttachmentAttributes,
   AttachmentConstructorContract,
-} from '@ioc:Adonis/Addons/AttachmentLite'
+} from '@ioc:Gotedo/Adonis/AttachmentLite'
 import detect from 'detect-file-type'
 import { Readable } from 'stream'
 import sanitize from 'sanitize-filename'
