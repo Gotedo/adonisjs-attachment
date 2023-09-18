@@ -41,7 +41,10 @@ async function persistAttachment(
    * remove the existing file.
    */
   if (existingFile && !newFile) {
-    existingFile.setOptions(options)
+    // Ensure that any existing runtime options are not overwritten by the `options`
+    // coming from the persistent operation
+    // @ts-ignore
+    existingFile.setOptions({ ...(options || {}), ...(existingFile.options || {}) })
     modelInstance['attachments'].detached.push(existingFile)
     return
   }
@@ -51,14 +54,20 @@ async function persistAttachment(
    * file.
    */
   if (newFile && newFile.isLocal) {
-    newFile.setOptions(options)
+    // Ensure that any existing runtime options are not overwritten by the `options`
+    // coming from the persistent operation
+    // @ts-ignore
+    newFile.setOptions({ ...(options || {}), ...(newFile.options || {}) })
     modelInstance['attachments'].attached.push(newFile)
 
     /**
      * If there was an existing file, then we must get rid of it
      */
     if (existingFile) {
-      existingFile.setOptions(options)
+      // Ensure that any existing runtime options are not overwritten by the `options`
+      // coming from the persistent operation
+      // @ts-ignore
+      existingFile.setOptions({ ...(options || {}), ...(existingFile.options || {}) })
       modelInstance['attachments'].detached.push(existingFile)
     }
 
@@ -171,7 +180,10 @@ async function afterFind(modelInstance: LucidRow) {
   await Promise.all(
     modelInstance.constructor['attachments'].map(
       (attachmentField: { property: string; options?: AttachmentOptions }) => {
-        if (modelInstance[attachmentField.property]) {
+        if (
+          modelInstance[attachmentField.property] &&
+          modelInstance[attachmentField.property] instanceof Attachment
+        ) {
           modelInstance[attachmentField.property].setOptions(attachmentField.options)
           return modelInstance[attachmentField.property].computeUrl()
         }

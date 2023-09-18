@@ -2085,3 +2085,61 @@ test.group('@attachment | fromBuffer | update with transaction', (group) => {
     assert.isFalse(await Drive.exists(secondResponse.avatar.name))
   })
 })
+
+test.group('@attachment | insert with runtime options', (group) => {
+  group.setup(async () => {
+    app = await setupApplication()
+    await setup(app)
+
+    app.container.resolveBinding('Adonis/Core/Route').commit()
+    Attachment.setDrive(app.container.resolveBinding('Adonis/Core/Drive'))
+  })
+
+  group.each.teardown(async () => {
+    await app.container.resolveBinding('Adonis/Lucid/Database').connection().truncate('users')
+  })
+
+  group.teardown(async () => {
+    await cleanup(app)
+  })
+
+  test('save with folder set at runtime', async ({ assert }) => {
+    const Drive = app.container.resolveBinding('Adonis/Core/Drive')
+    const { column, BaseModel } = app.container.use('Adonis/Lucid/Orm')
+    const HttpContext = app.container.resolveBinding('Adonis/Core/HttpContext')
+
+    class User extends BaseModel {
+      @column({ isPrimary: true })
+      public id: string
+
+      @column()
+      public username: string
+
+      @attachment()
+      public avatar: AttachmentContract | null
+    }
+
+    const server = createServer((req, res) => {
+      const ctx = HttpContext.create('/', {}, req, res)
+
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const file = ctx.request.file('avatar')!
+
+        const user = new User()
+        user.username = 'virk'
+        user.avatar = Attachment.fromFile(file)
+        user.avatar.setOptions({ folder: 'a/b/c' })
+        await user.save()
+
+        ctx.response.send(user)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server)
+      .post('/')
+      .attach('avatar', join(__dirname, '../cat.jpeg'))
+
+    assert.isTrue(await Drive.exists(body.avatar.name))
+  })
+})
