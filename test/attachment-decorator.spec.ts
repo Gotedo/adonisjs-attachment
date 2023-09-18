@@ -1,7 +1,7 @@
 /*
- * @adonisjs/attachment-lite
+ * @gotedo/adonisjs-attachment
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) Ndianabasi Udonkang <ndianabasi@gotedo.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -63,7 +63,7 @@ test.group('@attachment | insert', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -102,7 +102,7 @@ test.group('@attachment | insert', (group) => {
       public avatar: AttachmentContract | null
     }
 
-    await User.create({ username: 'virk' })
+    await User.create({ username: 'ndianabasi' })
 
     const server = createServer((req, res) => {
       const ctx = HttpContext.create('/', {}, req, res)
@@ -111,7 +111,7 @@ test.group('@attachment | insert', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
 
         try {
@@ -177,7 +177,7 @@ test.group('@attachment | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.useTransaction(trx).save()
 
@@ -218,7 +218,7 @@ test.group('@attachment | insert with transaction', (group) => {
       public avatar: AttachmentContract | null
     }
 
-    await User.create({ username: 'virk' })
+    await User.create({ username: 'ndianabasi' })
 
     const server = createServer((req, res) => {
       const ctx = HttpContext.create('/', {}, req, res)
@@ -228,7 +228,7 @@ test.group('@attachment | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
 
         try {
@@ -279,7 +279,7 @@ test.group('@attachment | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.useTransaction(trx).save()
         await trx.rollback()
@@ -339,7 +339,7 @@ test.group('@attachment | update', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')!
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -388,7 +388,7 @@ test.group('@attachment | update', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
 
         try {
@@ -459,7 +459,7 @@ test.group('@attachment | update with transaction', (group) => {
         const file = ctx.request.file('avatar')!
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         user.avatar = Attachment.fromFile(file)
         await user.save()
         await trx.commit()
@@ -511,7 +511,7 @@ test.group('@attachment | update with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
 
         try {
@@ -567,10 +567,10 @@ test.group('@attachment | update with transaction', (group) => {
         const file = ctx.request.file('avatar')!
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         const isLocal = user.$isLocal
 
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.useTransaction(trx).save()
 
@@ -638,7 +638,7 @@ test.group('@attachment | resetToNull', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -683,7 +683,7 @@ test.group('@attachment | resetToNull', (group) => {
         const file = ctx.request.file('avatar')
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = file ? Attachment.fromFile(file) : null
 
         try {
@@ -751,7 +751,7 @@ test.group('@attachment | resetToNull with transaction', (group) => {
         const file = ctx.request.file('avatar')
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.useTransaction(trx).save()
         await trx.commit()
@@ -799,7 +799,7 @@ test.group('@attachment | resetToNull with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = file ? Attachment.fromFile(file) : null
 
         try {
@@ -852,7 +852,7 @@ test.group('@attachment | resetToNull with transaction', (group) => {
         const file = ctx.request.file('avatar')
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         const isLocal = user.$isLocal
         user.avatar = file ? Attachment.fromFile(file) : null
 
@@ -918,7 +918,7 @@ test.group('@attachment | delete', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -965,7 +965,7 @@ test.group('@attachment | delete', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -1030,7 +1030,7 @@ test.group('@attachment | delete with transaction', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -1082,7 +1082,7 @@ test.group('@attachment | delete with transaction', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const file = ctx.request.file('avatar')
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -1152,7 +1152,7 @@ test.group('@attachment | find', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1195,7 +1195,7 @@ test.group('@attachment | find', (group) => {
         const file = ctx.request.file('avatar')!
 
         let user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = file ? Attachment.fromFile(file) : null
         await user.save()
 
@@ -1234,7 +1234,7 @@ test.group('@attachment | find', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1296,7 +1296,7 @@ test.group('@attachment | fetch', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1337,7 +1337,7 @@ test.group('@attachment | fetch', (group) => {
 
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         await Promise.all(
-          ['virk', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
+          ['ndianabasi', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
         )
 
         const users = await User.all()
@@ -1377,7 +1377,7 @@ test.group('@attachment | fetch', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1439,7 +1439,7 @@ test.group('@attachment | paginate', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1480,7 +1480,7 @@ test.group('@attachment | paginate', (group) => {
 
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         await Promise.all(
-          ['virk', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
+          ['ndianabasi', 'ndianabasi'].map((username) => User.firstOrCreate({ username }))
         )
 
         const users = await User.query().paginate(1)
@@ -1519,7 +1519,7 @@ test.group('@attachment | paginate', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         await user.save()
 
@@ -1690,7 +1690,7 @@ test.group('@attachment | fromBuffer | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
         await user.useTransaction(trx).save()
 
@@ -1729,7 +1729,7 @@ test.group('@attachment | fromBuffer | insert with transaction', (group) => {
       public avatar: AttachmentContract | null
     }
 
-    await User.create({ username: 'virk' })
+    await User.create({ username: 'ndianabasi' })
 
     const server = createServer((req, res) => {
       const ctx = HttpContext.create('/', {}, req, res)
@@ -1739,7 +1739,7 @@ test.group('@attachment | fromBuffer | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
 
         try {
@@ -1788,7 +1788,7 @@ test.group('@attachment | fromBuffer | insert with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
         await user.useTransaction(trx).save()
         await trx.rollback()
@@ -1846,7 +1846,7 @@ test.group('@attachment | fromBuffer | update', (group) => {
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
         const buffer = await readFile(join(__dirname, '../cat.jpeg'))
 
-        const user = await User.firstOrNew({ username: 'virk' }, {})
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {})
         user.avatar = Attachment.fromBuffer(buffer, 'my_beautiful_cat.jpg')
         await user.save()
 
@@ -1891,7 +1891,7 @@ test.group('@attachment | fromBuffer | update', (group) => {
         const buffer = await readFile(join(__dirname, '../cat.jpeg'))
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
 
         try {
@@ -1958,7 +1958,7 @@ test.group('@attachment | fromBuffer | update with transaction', (group) => {
         const buffer = await readFile(join(__dirname, '../cat.jpeg'))
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
         await user.save()
         await trx.commit()
@@ -2006,7 +2006,7 @@ test.group('@attachment | fromBuffer | update with transaction', (group) => {
         const trx = await Db.transaction()
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
 
         try {
@@ -2058,10 +2058,10 @@ test.group('@attachment | fromBuffer | update with transaction', (group) => {
         const buffer = await readFile(join(__dirname, '../cat.jpeg'))
         const trx = await Db.transaction()
 
-        const user = await User.firstOrNew({ username: 'virk' }, {}, { client: trx })
+        const user = await User.firstOrNew({ username: 'ndianabasi' }, {}, { client: trx })
         const isLocal = user.$isLocal
 
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
         await user.useTransaction(trx).save()
 
@@ -2126,7 +2126,7 @@ test.group('@attachment | insert with runtime options', (group) => {
         const file = ctx.request.file('avatar')!
 
         const user = new User()
-        user.username = 'virk'
+        user.username = 'ndianabasi'
         user.avatar = Attachment.fromFile(file)
         user.avatar.setOptions({ folder: 'a/b/c' })
         await user.save()

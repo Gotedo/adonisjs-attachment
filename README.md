@@ -40,13 +40,13 @@ Also, it relies on [AdonisJS drive](https://docs.adonisjs.com/guides/drive) for 
 Install the package from the npm registry as follows.
 
 ```sh
-npm i @adonisjs/attachment-lite
+npm i @gotedo/adonisjs-attachment
 ```
 
 Next, configure the package by running the following ace command.
 
 ```sh
-node ace configure @adonisjs/attachment-lite
+node ace configure @gotedo/adonisjs-attachment
 ```
 
 ## Usage
@@ -353,12 +353,12 @@ export default Factory.define(Post, async ({ faker }) => {
 ```
  
 [github-actions-image]: https://img.shields.io/github/workflow/status/adonisjs/attachment-lite/test?style=for-the-badge
-[github-actions-url]: https://github.com/adonisjs/attachment-lite/actions/workflows/test.yml "github-actions"
+[github-actions-url]: https://github.com/Gotedo/adonisjs-attachment/actions/workflows/test.yml "github-actions"
 
-[npm-image]: https://img.shields.io/npm/v/@adonisjs/attachment-lite.svg?style=for-the-badge&logo=npm
-[npm-url]: https://npmjs.org/package/@adonisjs/attachment-lite "npm"
+[npm-image]: https://img.shields.io/npm/v/@gotedo/adonisjs-attachment.svg?style=for-the-badge&logo=npm
+[npm-url]: https://npmjs.org/package/@gotedo/adonisjs-attachment "npm"
 
-[license-image]: https://img.shields.io/npm/l/@adonisjs/attachment-lite?color=blueviolet&style=for-the-badge
+[license-image]: https://img.shields.io/npm/l/@gotedo/adonisjs-attachment?color=blueviolet&style=for-the-badge
 [license-url]: LICENSE.md "license"
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript

@@ -1,6 +1,6 @@
 {
-  "name": "@adonisjs/attachment-lite",
-  "version": "1.0.7",
+  "name": "@gotedo/adonisjs-attachment",
+  "version": "1.0.0-beta",
   "description": "Turn any field on your Lucid model to an attachment data type",
   "main": "build/providers/AttachmentLiteProvider.js",
   "files": [
@@ -30,7 +30,7 @@
     "attachment",
     "attachment-lite"
   ],
-  "author": "virk,adonisjs",
+  "author": "ndianabasi,gotedo",
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/core": "^5.9.0",
@@ -76,12 +76,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adonisjs/attachment-lite.git"
+    "url": "git+https://github.com/Gotedo/adonisjs-attachment.git"
   },
   "bugs": {
-    "url": "https://github.com/adonisjs/attachment-lite/issues"
+    "url": "https://github.com/Gotedo/adonisjs-attachment/issues"
   },
-  "homepage": "https://github.com/adonisjs/attachment-lite#readme",
+  "homepage": "https://github.com/Gotedo/adonisjs-attachment#readme",
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
     "@poppinss/utils": "^5.0.0",
@@ -89,9 +89,9 @@
     "sanitize-filename": "^1.6.3"
   },
   "adonisjs": {
-    "types": "@adonisjs/attachment-lite",
+    "types": "@gotedo/adonisjs-attachment",
     "providers": [
-      "@adonisjs/attachment-lite"
+      "@gotedo/adonisjs-attachment"
     ]
   },
   "publishConfig": {
