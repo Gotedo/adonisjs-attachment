@@ -149,6 +149,7 @@ async function createUsersTable(client: QueryClientContract) {
   await client.schema.createTable('users', (table) => {
     table.increments('id').notNullable().primary()
     table.string('username').notNullable().unique()
+    table.jsonb('document')
     table.string('avatar').nullable()
     table.string('cover_image').nullable()
   })

@@ -1614,19 +1614,25 @@ test.group('@attachment | fromBuffer | insert', (group) => {
       public username: string
 
       @attachment({ disk: 'r2', folder: 'adonisjs-attachment' })
-      public avatar: AttachmentContract | null
+      public document: AttachmentContract | null
     }
 
     const server = createServer((req, res) => {
       const ctx = HttpContext.create('/', {}, req, res)
 
       app.container.make(BodyParserMiddleware).handle(ctx, async () => {
-        const buffer = await readFile(join(__dirname, '../cat.jpeg'))
+        const buffer = Buffer.from('hello world')
 
         const user = new User()
         user.username = 'ndianabasi'
-        user.avatar = Attachment.fromBuffer(buffer, 'avatar-1')
+        user.document = Attachment.fromBuffer(buffer, 'document.txt', {
+          ext: 'txt',
+          mimeType: 'text/plain',
+        })
+
         await user.save()
+
+        await user.refresh()
 
         ctx.response.send(user)
         ctx.response.finish()
@@ -1638,10 +1644,12 @@ test.group('@attachment | fromBuffer | insert', (group) => {
     const users = await User.all()
 
     assert.lengthOf(users, 1)
-    assert.instanceOf(users[0].avatar, Attachment)
-    assert.deepEqual(users[0].avatar?.toJSON(), body.avatar)
+    assert.instanceOf(users[0].document, Attachment)
+    assert.deepEqual(users[0].document?.toJSON(), body.document)
 
-    assert.isTrue(await Drive.use('r2').exists(body.avatar.name))
+    const document = await Drive.use('r2').get(users[0].document?.name!)
+
+    assert.equal(document.toString(), 'hello world')
   })
 
   test('cleanup attachments when save call fails', async ({ assert }) => {
