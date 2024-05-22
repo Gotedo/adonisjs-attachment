@@ -5,7 +5,8 @@
     "types": [
       "@types/node",
       "@adonisjs/core",
-      "@adonisjs/lucid"
+      "@adonisjs/lucid",
+      "adonis-drive-r2"
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

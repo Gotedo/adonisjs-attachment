@@ -250,7 +250,9 @@ export class Attachment implements AttachmentContract {
      * Write to the disk
      */
     if (this.buffer) {
-      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()))
+      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()), {
+        contentLength: this.buffer.length,
+      })
     } else {
       await this.file!.moveToDisk('./', { name }, this.options?.disk)
     }
