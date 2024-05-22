@@ -1601,6 +1601,57 @@ test.group('@attachment | fromBuffer | insert', (group) => {
     assert.isTrue(await Drive.exists(body.avatar.name))
   })
 
+  test('save attachment to the db and on Cloudflare R2', async ({ assert }) => {
+    const Drive = app.container.resolveBinding('Adonis/Core/Drive')
+    const { column, BaseModel } = app.container.use('Adonis/Lucid/Orm')
+    const HttpContext = app.container.resolveBinding('Adonis/Core/HttpContext')
+
+    class User extends BaseModel {
+      @column({ isPrimary: true })
+      public id: string
+
+      @column()
+      public username: string
+
+      @attachment({ disk: 'r2', folder: 'adonisjs-attachment' })
+      public document: AttachmentContract | null
+    }
+
+    const server = createServer((req, res) => {
+      const ctx = HttpContext.create('/', {}, req, res)
+
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const buffer = Buffer.from('hello world')
+
+        const user = new User()
+        user.username = 'ndianabasi'
+        user.document = Attachment.fromBuffer(buffer, 'document.txt', {
+          ext: 'txt',
+          mimeType: 'text/plain',
+        })
+
+        await user.save()
+
+        await user.refresh()
+
+        ctx.response.send(user)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server).post('/')
+
+    const users = await User.all()
+
+    assert.lengthOf(users, 1)
+    assert.instanceOf(users[0].document, Attachment)
+    assert.deepEqual(users[0].document?.toJSON(), body.document)
+
+    const document = await Drive.use('r2').get(users[0].document?.name!)
+
+    assert.equal(document.toString(), 'hello world')
+  })
+
   test('cleanup attachments when save call fails', async ({ assert }) => {
     const Drive = app.container.resolveBinding('Adonis/Core/Drive')
     const { column, BaseModel } = app.container.use('Adonis/Lucid/Orm')

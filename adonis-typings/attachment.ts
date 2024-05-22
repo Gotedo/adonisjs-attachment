@@ -146,7 +146,11 @@ declare module '@ioc:Gotedo/Adonis/AttachmentLite' {
   export interface AttachmentConstructorContract {
     new (attributes: AttachmentAttributes, file?: MultipartFileContract): AttachmentContract
     fromFile(file: MultipartFileContract): AttachmentContract
-    fromBuffer(buffer: Buffer, fileName: string): AttachmentContract
+    fromBuffer(
+      buffer: Buffer,
+      fileName: string,
+      fileType?: { mimeType: string; ext: string }
+    ): AttachmentContract
     fromDbResponse(response: string): AttachmentContract
     getDrive(): DriveManagerContract
     setDrive(drive: DriveManagerContract): void

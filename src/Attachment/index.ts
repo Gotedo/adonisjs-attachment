@@ -23,7 +23,7 @@ import detect from 'detect-file-type'
 import { Readable } from 'stream'
 import sanitize from 'sanitize-filename'
 
-const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType']
+const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType'] as const
 
 /**
  * Attachment class represents an attachment data type
@@ -63,22 +63,34 @@ export class Attachment implements AttachmentContract {
   /**
    * Create attachment instance from the bodyparser via a buffer
    */
-  public static fromBuffer(buffer: Buffer, filename: string): Attachment {
+  public static fromBuffer(
+    buffer: Buffer,
+    filename: string,
+    fileType?: { mimeType: string; ext: string }
+  ): Attachment {
     type BufferProperty = { ext: string; mime: string }
 
-    let bufferProperty: BufferProperty | undefined
+    let bufferProperty: BufferProperty = {} as BufferProperty
 
     detect.fromBuffer(buffer, function (err: Error | string, result: BufferProperty) {
       if (err) {
         throw new Error(err instanceof Error ? err.message : err)
       }
       if (!result) {
-        throw new Exception('Please provide a valid file buffer')
+        if (!fileType) {
+          throw new Exception(
+            '[adonisjs-attachment] Please provide a valid file buffer or provide the mime type as the 3rd parameter of the "fromBuffer" method'
+          )
+        }
+
+        bufferProperty.ext = fileType.ext
+        bufferProperty.mime = fileType.mimeType
+      } else {
+        bufferProperty = result
       }
-      bufferProperty = result
     })
 
-    const { mime, ext } = bufferProperty!
+    const { mime, ext } = bufferProperty
 
     const attributes: AttachmentAttributes = {
       extname: ext,
@@ -250,7 +262,9 @@ export class Attachment implements AttachmentContract {
      * Write to the disk
      */
     if (this.buffer) {
-      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()))
+      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()), {
+        contentLength: this.buffer.length,
+      })
     } else {
       await this.file!.moveToDisk('./', { name }, this.options?.disk)
     }
