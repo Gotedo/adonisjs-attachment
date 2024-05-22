@@ -21,7 +21,6 @@ export const fs = new Filesystem(join(__dirname, '__app'))
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!
-const R2_BUCKET = process.env.R2_BUCKET!
 
 /**
  * Setup AdonisJS application
@@ -36,7 +35,6 @@ export async function setupApplication(
     R2_ACCOUNT_ID=${R2_ACCOUNT_ID}
     R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
     R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
-    R2_BUCKET=${R2_BUCKET}
     `
   )
   await fs.add(
@@ -106,10 +104,10 @@ export async function setupApplication(
       r2: {
         driver: 'r2',
         visibility: 'private',
+        accountId: '${R2_ACCOUNT_ID}',
         key: '${R2_ACCESS_KEY_ID}',
         secret: '${R2_SECRET_ACCESS_KEY}',
-        bucket: '${R2_BUCKET}',
-        accountId: '${R2_ACCOUNT_ID}',
+        bucket: 'adonis-drive-r2-private',
       }
     }
   `
