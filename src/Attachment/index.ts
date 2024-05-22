@@ -20,7 +20,6 @@ import type {
   AttachmentConstructorContract,
 } from '@ioc:Gotedo/Adonis/AttachmentLite'
 import detect from 'detect-file-type'
-import { Readable } from 'stream'
 import sanitize from 'sanitize-filename'
 
 const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType'] as const
@@ -262,9 +261,7 @@ export class Attachment implements AttachmentContract {
      * Write to the disk
      */
     if (this.buffer) {
-      await this.getDisk().putStream(name, Readable.from(this.buffer.toString()), {
-        contentLength: this.buffer.length,
-      })
+      await this.getDisk().put(name, this.buffer)
     } else {
       await this.file!.moveToDisk('./', { name }, this.options?.disk)
     }
