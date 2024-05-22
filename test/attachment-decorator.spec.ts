@@ -20,6 +20,7 @@ import { readFile } from 'fs/promises'
 import { Attachment } from '../src/Attachment'
 import { attachment } from '../src/Attachment/decorator'
 import { setup, cleanup, setupApplication } from '../test-helpers'
+import isValidPdf from 'is-pdf-valid'
 
 let app: ApplicationContract
 
@@ -1650,6 +1651,54 @@ test.group('@attachment | fromBuffer | insert', (group) => {
     const document = await Drive.use('r2').get(users[0].document?.name!)
 
     assert.equal(document.toString(), 'hello world')
+  })
+
+  test('check integrity of binary file via "adonis-drive-r2" driver', async ({ assert }) => {
+    const Drive = app.container.resolveBinding('Adonis/Core/Drive')
+    const { column, BaseModel } = app.container.use('Adonis/Lucid/Orm')
+    const HttpContext = app.container.resolveBinding('Adonis/Core/HttpContext')
+
+    class User extends BaseModel {
+      @column({ isPrimary: true })
+      public id: string
+
+      @column()
+      public username: string
+
+      @attachment({ disk: 'r2', folder: 'adonisjs-attachment' })
+      public document: AttachmentContract | null
+    }
+
+    const server = createServer((req, res) => {
+      const ctx = HttpContext.create('/', {}, req, res)
+
+      app.container.make(BodyParserMiddleware).handle(ctx, async () => {
+        const buffer = await readFile(join(__dirname, './sample_pdf.pdf'))
+        assert.isTrue(isValidPdf(buffer))
+
+        const user = new User()
+        user.username = 'ndianabasi'
+        user.document = Attachment.fromBuffer(buffer, 'document.pdf')
+
+        await user.save()
+
+        await user.refresh()
+
+        ctx.response.send(user)
+        ctx.response.finish()
+      })
+    })
+
+    const { body } = await supertest(server).post('/')
+
+    const users = await User.all()
+
+    assert.lengthOf(users, 1)
+    assert.instanceOf(users[0].document, Attachment)
+    assert.deepEqual(users[0].document?.toJSON(), body.document)
+
+    const document = await Drive.use('r2').get(users[0].document?.name!)
+    assert.isTrue(isValidPdf(document))
   })
 
   test('cleanup attachments when save call fails', async ({ assert }) => {
