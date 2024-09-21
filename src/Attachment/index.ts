@@ -21,6 +21,7 @@ import type {
 } from '@ioc:Gotedo/Adonis/AttachmentLite'
 import detect from 'detect-file-type'
 import sanitize from 'sanitize-filename'
+import { toSlug } from '@poppinss/utils/build/src/Helpers/string'
 
 const REQUIRED_ATTRIBUTES = ['name', 'size', 'extname', 'mimeType'] as const
 
@@ -212,7 +213,7 @@ export class Attachment implements AttachmentContract {
       if (clientNameParts.length > 1) {
         name = clientNameParts.slice(0, clientNameParts.length - 1).join('.')
       }
-      name = `${sanitize(name)}-${createId()}`
+      name = `${toSlug(sanitize(name), { lower: true, trim: true })}-${createId()}`
     } else {
       name = createId()
     }
